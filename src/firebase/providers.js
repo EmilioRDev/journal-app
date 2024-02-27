@@ -1,4 +1,4 @@
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { FirebaseAuth } from './config';
 
 const googleProvider = new GoogleAuthProvider();
@@ -20,6 +20,33 @@ export const signInWithGoogle = async () => {
 		};
 	} catch (error) {
 		// Handle Errors here.
+		const errorMessage = error.message;
+
+		return {
+			ok: false,
+			errorMessage,
+		};
+	}
+};
+
+export const registerUserWithEmailPassword = async({email, password, displayName,}) => {
+	try {
+
+		const resp = await createUserWithEmailAndPassword(FirebaseAuth, email, password);
+		const {uid, photoURL} = resp.user;
+		// TODO: actualizar el displaName en Firebase
+
+		return {
+			ok: true,
+			//User info
+			displayName,
+			email,
+			photoURL,
+			uid,
+		}
+
+	} catch (error) {
+		console.log(error);
 		const errorMessage = error.message;
 
 		return {

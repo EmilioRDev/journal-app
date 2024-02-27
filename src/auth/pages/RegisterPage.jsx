@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { Button, Grid, Link, TextField, Typography } from '@mui/material';
 import { AuthLayout } from '../layout/AuthLayout';
 import { useForm } from '../../hooks';
+import { startCreatingUserWithEmailPassword } from '../../store/auth';
 
 const formData = {
 	email: '',
@@ -12,16 +14,14 @@ const formData = {
 
 const formValidations = {
 	email: [(value) => value.includes('@'), 'El correo debe ser valido'],
-	password: [
-		(value) => value.length >= 6,
-		'La contraseña debe de tener más de 6 caracteres',
-	],
+	password: [(value) => value.length >= 6, 'La contraseña debe de tener más de 6 caracteres'],
 	displayName: [(value) => value.length >= 1, 'El nombre es obligatorio'],
 };
 
 export const RegisterPage = () => {
 
-	const [formSubmitted, setFormSubmitted] = useState(false)
+	const dispatch = useDispatch();
+	const [formSubmitted, setFormSubmitted] = useState(false);
 
 	const {
 		displayName,
@@ -38,12 +38,12 @@ export const RegisterPage = () => {
 	const onSubmit = (event) => {
 		event.preventDefault();
 		setFormSubmitted(true);
-		console.log(formState);
+		if (!isFormValid) return;
+		dispatch(startCreatingUserWithEmailPassword(formState))
 	};
 
 	return (
 		<AuthLayout title="Crear cuenta">
-			<h1>FormValid {isFormValid ? 'Valido' : 'Incorrecto'}</h1>
 			<form onSubmit={onSubmit}>
 				<Grid container>
 					<Grid item xs={12} sx={{ mt: 2 }}>
