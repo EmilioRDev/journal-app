@@ -1,4 +1,10 @@
-import { GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth';
+import {
+	GoogleAuthProvider,
+	createUserWithEmailAndPassword,
+	signInWithEmailAndPassword,
+	signInWithPopup,
+	updateProfile,
+} from 'firebase/auth';
 import { FirebaseAuth } from './config';
 
 const googleProvider = new GoogleAuthProvider();
@@ -29,13 +35,12 @@ export const signInWithGoogle = async () => {
 	}
 };
 
-export const registerUserWithEmailPassword = async({email, password, displayName,}) => {
+export const registerUserWithEmailPassword = async ({ email, password, displayName }) => {
 	try {
-
 		const resp = await createUserWithEmailAndPassword(FirebaseAuth, email, password);
-		const {uid, photoURL} = resp.user;
+		const { uid, photoURL } = resp.user;
 
-		await updateProfile(FirebaseAuth.currentUser, {displayName});
+		await updateProfile(FirebaseAuth.currentUser, { displayName });
 
 		return {
 			ok: true,
@@ -44,8 +49,7 @@ export const registerUserWithEmailPassword = async({email, password, displayName
 			email,
 			photoURL,
 			uid,
-		}
-
+		};
 	} catch (error) {
 		console.log(error);
 		const errorMessage = 'Email ya en uso';
@@ -57,11 +61,10 @@ export const registerUserWithEmailPassword = async({email, password, displayName
 	}
 };
 
-export const loginWithEmailPassword = async({email, password}) => {
-	
+export const loginWithEmailPassword = async ({ email, password }) => {
 	try {
-		const resp = await signInWithEmailAndPassword(FirebaseAuth, email, password)
-		const {uid, displayName, photoURL} = resp.user;
+		const resp = await signInWithEmailAndPassword(FirebaseAuth, email, password);
+		const { uid, displayName, photoURL } = resp.user;
 
 		return {
 			ok: true,
@@ -70,7 +73,7 @@ export const loginWithEmailPassword = async({email, password}) => {
 			photoURL,
 			uid,
 			email,
-		}
+		};
 	} catch (error) {
 		const errorMessage = 'Credenciales incorrectas';
 
@@ -79,4 +82,8 @@ export const loginWithEmailPassword = async({email, password}) => {
 			errorMessage,
 		};
 	}
+};
+
+export const logoutFirebase = async () => {
+	return await FirebaseAuth.signOut();
 };
