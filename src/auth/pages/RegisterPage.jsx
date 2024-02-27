@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { Button, Grid, Link, TextField, Typography } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { Alert, Button, Grid, Link, TextField, Typography } from '@mui/material';
 import { AuthLayout } from '../layout/AuthLayout';
 import { useForm } from '../../hooks';
 import { startCreatingUserWithEmailPassword } from '../../store/auth';
@@ -19,9 +19,11 @@ const formValidations = {
 };
 
 export const RegisterPage = () => {
-
 	const dispatch = useDispatch();
 	const [formSubmitted, setFormSubmitted] = useState(false);
+
+	const { status, errorMessage } = useSelector((state) => state.auth);
+	const isCheckingAuthentication = useMemo(() => status === 'checking', [status]);
 
 	const {
 		displayName,
@@ -39,21 +41,21 @@ export const RegisterPage = () => {
 		event.preventDefault();
 		setFormSubmitted(true);
 		if (!isFormValid) return;
-		dispatch(startCreatingUserWithEmailPassword(formState))
+		dispatch(startCreatingUserWithEmailPassword(formState));
 	};
 
 	return (
-		<AuthLayout title="Crear cuenta">
+		<AuthLayout title='Crear cuenta'>
 			<form onSubmit={onSubmit}>
 				<Grid container>
 					<Grid item xs={12} sx={{ mt: 2 }}>
 						<TextField
-							label="Nombre Completo"
-							type="text"
-							autoComplete="off"
-							placeholder="Nombre Completo"
+							label='Nombre Completo'
+							type='text'
+							autoComplete='off'
+							placeholder='Nombre Completo'
 							fullWidth
-							name="displayName"
+							name='displayName'
 							value={displayName}
 							onChange={onInputChange}
 							error={!!displayNameValid && formSubmitted}
@@ -62,12 +64,12 @@ export const RegisterPage = () => {
 					</Grid>
 					<Grid item xs={12} sx={{ mt: 2 }}>
 						<TextField
-							label="Email"
-							type="email"
-							autoComplete="off"
-							placeholder="correo@gmail.com"
+							label='Email'
+							type='email'
+							autoComplete='off'
+							placeholder='correo@gmail.com'
 							fullWidth
-							name="email"
+							name='email'
 							value={email}
 							onChange={onInputChange}
 							error={!!emailValid && formSubmitted}
@@ -76,12 +78,12 @@ export const RegisterPage = () => {
 					</Grid>
 					<Grid item xs={12} sx={{ mt: 2 }}>
 						<TextField
-							label="Password"
-							type="password"
-							autoComplete="new-password"
-							placeholder="Password"
+							label='Password'
+							type='password'
+							autoComplete='new-password'
+							placeholder='Password'
 							fullWidth
-							name="password"
+							name='password'
 							value={password}
 							onChange={onInputChange}
 							error={!!passwordValid && formSubmitted}
@@ -89,15 +91,18 @@ export const RegisterPage = () => {
 						/>
 					</Grid>
 					<Grid container spacing={2} sx={{ mb: 1, mt: 1 }}>
+						<Grid item xs={12} display={!!errorMessage ? '': 'none'}>
+							<Alert severity='error'>{errorMessage}</Alert>
+						</Grid>
 						<Grid item xs={12}>
-							<Button type="submit" variant="contained" fullWidth>
+							<Button disabled={isCheckingAuthentication} type='submit' variant='contained' fullWidth>
 								Crear cuenta
 							</Button>
 						</Grid>
 					</Grid>
-					<Grid container direction="row" justifyContent="end">
+					<Grid container direction='row' justifyContent='end'>
 						<Typography sx={{ mr: 1 }}>¿Ya tienes cuenta?</Typography>
-						<Link component={RouterLink} color="inherit" to="/auth/login">
+						<Link component={RouterLink} color='inherit' to='/auth/login'>
 							Ingresar
 						</Link>
 					</Grid>

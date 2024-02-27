@@ -34,7 +34,7 @@ export const registerUserWithEmailPassword = async({email, password, displayName
 
 		const resp = await createUserWithEmailAndPassword(FirebaseAuth, email, password);
 		const {uid, photoURL} = resp.user;
-		
+
 		await updateProfile(FirebaseAuth.currentUser, {displayName});
 
 		return {
@@ -48,7 +48,7 @@ export const registerUserWithEmailPassword = async({email, password, displayName
 
 	} catch (error) {
 		console.log(error);
-		const errorMessage = error.message;
+		const errorMessage = 'Email ya en uso';
 
 		return {
 			ok: false,
